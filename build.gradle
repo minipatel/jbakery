@@ -3,6 +3,7 @@ apply plugin: 'java'
 apply plugin: 'application'
 
 repositories {
+    mavenCentral()
     jcenter()
 }
 
@@ -10,15 +11,29 @@ configurations {
     provided
 }
 
+ext {
+    vertxVersion = '3.1.0'
+}
+
 dependencies {
     provided 'org.projectlombok:lombok:1.16.6'
     compile 'org.slf4j:slf4j-api:1.7.7'
-    compile 'org.apache.logging.log4j:log4j:2.4.1'
+    compile 'org.apache.logging.log4j:log4j-api:2.4.1'
+    compile 'org.apache.logging.log4j:log4j-core:2.4.1'
     compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.4.1'
+
     compile 'org.eclipse.jgit:org.eclipse.jgit:4.1.0.201509280440-r'
     compile 'org.eclipse.jgit:org.eclipse.jgit.archive:4.1.0.201509280440-r'
     compile 'org.jbake:jbake-core:2.4.0'
 
+    compile "io.vertx:vertx-core:${vertxVersion}"
+    compile "io.vertx:vertx-web:${vertxVersion}"
+    compile "io.vertx:vertx-web-templ-thymeleaf:${vertxVersion}"
+    compile "io.vertx:vertx-web-templ-handlebars:${vertxVersion}"
+    compile "io.vertx:vertx-auth-shiro:${vertxVersion}"
+    compile "io.vertx:vertx-dropwizard-metrics:${vertxVersion}"
+
+    testCompile "io.vertx:vertx-unit:${vertxVersion}"
     testCompile "junit:junit:4.11"
 }
 
@@ -27,5 +42,8 @@ sourceSets {
         compileClasspath += configurations.provided
     }
 }
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
 
 mainClassName = "netdava.jbakery.JBakery"

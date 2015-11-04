@@ -1,0 +1,31 @@
+// Apply the java plugin to add support for Java
+apply plugin: 'java'
+apply plugin: 'application'
+
+repositories {
+    jcenter()
+}
+
+configurations {
+    provided
+}
+
+dependencies {
+    provided 'org.projectlombok:lombok:1.16.6'
+    compile 'org.slf4j:slf4j-api:1.7.7'
+    compile 'org.apache.logging.log4j:log4j:2.4.1'
+    compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.4.1'
+    compile 'org.eclipse.jgit:org.eclipse.jgit:4.1.0.201509280440-r'
+    compile 'org.eclipse.jgit:org.eclipse.jgit.archive:4.1.0.201509280440-r'
+    compile 'org.jbake:jbake-core:2.4.0'
+
+    testCompile "junit:junit:4.11"
+}
+
+sourceSets {
+    main {
+        compileClasspath += configurations.provided
+    }
+}
+
+mainClassName = "netdava.jbakery.JBakery"

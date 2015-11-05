@@ -4,21 +4,23 @@ Website CMS with JBake .
 
 == Building
 
-We are using gradle[http://gradle.org/] to build our app. You will find the zip distribution in *build/distributions*
+We are using http://gradle.org/[Gradle] to build our app. You will find the zip distribution in *build/distributions*
 
 [source, shell]
----
+----
     ./gradlew build
----
+----
 
 == Running
 
 To run the application use:
 
 [source, shell]
----
+----
     ./gradlew run
----
+----
+
+Then visit http://localhost:8080/[localhost:8080]
 
 == Contributing
 

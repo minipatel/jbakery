@@ -2,6 +2,28 @@
 
 Website CMS with JBake .
 
+== Building
+
+We are using gradle[http://gradle.org/] to build our app. You will find the zip distribution in *build/distributions*
+
+[source, shell]
+---
+    ./gradlew build
+---
+
+== Running
+
+To run the application use:
+
+[source, shell]
+---
+    ./gradlew run
+---
+
+== Contributing
+
+If you find the project usefull but missing some features please consider sending pull requests.
+I recommend you first open an issue[https://github.com/netdava/jbakery/issues]
 
 
 == Lombok with Intellij Idea

@@ -2,6 +2,10 @@
 # Covers JetBrains IDEs: IntelliJ, RubyMine, PhpStorm, AppCode, PyCharm, CLion, Android Studio
 
 *.iml
+file-uploads
+logs
+webroot
+bower_components
 
 ## Directory-based project format:
 .idea/

@@ -9,6 +9,7 @@ repositories {
 
 configurations {
     provided
+    compile.extendsFrom provided
 }
 
 ext {
@@ -28,7 +29,10 @@ dependencies {
 
     compile "io.vertx:vertx-core:${vertxVersion}"
     compile "io.vertx:vertx-web:${vertxVersion}"
+
     compile "io.vertx:vertx-web-templ-thymeleaf:${vertxVersion}"
+    compile "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:1.3.1"
+
     compile "io.vertx:vertx-web-templ-handlebars:${vertxVersion}"
     compile "io.vertx:vertx-auth-shiro:${vertxVersion}"
     compile "io.vertx:vertx-dropwizard-metrics:${vertxVersion}"

@@ -30,5 +30,5 @@ I recommend you first open an issue[https://github.com/netdava/jbakery/issues]
 
 == Lombok with Intellij Idea
 
-* enable annotation processing if Lombok annotations are not recognized
-http://stackoverflow.com/questions/24006937/lombok-annotations-do-not-compile-under-intellij-idea
+* http://stackoverflow.com/questions/24006937/lombok-annotations-do-not-compile-under-intellij-idea[enable annotation processing]
+  if Lombok annotations are not recognized

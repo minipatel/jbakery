@@ -6,6 +6,7 @@ file-uploads
 logs
 webroot
 bower_components
+node_modules
 
 ## Directory-based project format:
 .idea/

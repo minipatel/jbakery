@@ -1,3 +1,7 @@
+plugins {
+    id "com.moowork.node" version "0.11"
+}
+
 // Apply the java plugin to add support for Java
 apply plugin: 'java'
 apply plugin: 'application'
@@ -51,3 +55,38 @@ sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
 mainClassName = "netdava.jbakery.JBakery"
+
+// gradle + node + bower integration
+// https://objectpartners.com/2015/04/29/using-gradle-and-bower-to-manage-jscss-dependencies/
+node {
+    version = '4.2.2'
+    npmVersion = '2.14.4'
+    download = true
+}
+
+task npmCacheConfig(type: NpmTask) {
+    description = "Configure the NPM cache"
+    def npmCacheDir = "${gradle.getGradleUserHomeDir()}/caches/npm"
+    outputs.files file(npmCacheDir)
+    args = [ 'config', 'set', 'cache', npmCacheDir ]
+}
+
+task npmPackages(type: NpmTask, dependsOn: npmCacheConfig) {
+    description = "Install Node.js packages"
+    args = [ 'install' ]
+    inputs.files file('package.json')
+    outputs.files file('node_modules')
+}
+
+task bowerInstall(type: NodeTask) {
+    script = file('node_modules/bower/bin/bower')
+    args = ["--config.storage.cache=${gradle.getGradleUserHomeDir()}/caches/bower/cache",
+            "--config.storage.packages=${gradle.getGradleUserHomeDir()}/caches/bower/packages",
+            "--config.storage.registry=${gradle.getGradleUserHomeDir()}/caches/bower/registry",
+            'install']
+    inputs.files file('bower.json')
+    outputs.files file('webroot/components')
+    dependsOn npmPackages
+}
+
+build.dependsOn bowerInstall

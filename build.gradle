@@ -2,6 +2,12 @@ plugins {
     id "com.moowork.node" version "0.11"
     id 'java'
     id 'idea'
+    id 'org.ajoberstar.grgit' version '1.4.2'
+    id 'org.ajoberstar.release-opinion' version '1.4.2'
+
+    id "com.jfrog.bintray" version "1.6"
+    id 'maven-publish'
+
     id 'application'
 }
 
@@ -9,6 +15,29 @@ repositories {
     mavenCentral()
     jcenter()
 }
+
+import org.ajoberstar.gradle.git.release.opinion.Strategies
+
+import java.text.SimpleDateFormat
+
+release {
+    grgit = org.ajoberstar.grgit.Grgit.open(project.rootDir)
+    defaultVersionStrategy = Strategies.SNAPSHOT
+}
+
+tasks.release.dependsOn ':publish'
+
+ext {
+    def grgit = org.ajoberstar.grgit.Grgit.open(project.rootDir)
+
+    revision = grgit.head().id
+    shortMessage = grgit.head().shortMessage
+
+    // add these properties to your ~/.gradle/gradle.properties file
+    bintrayUser = project.hasProperty('bintrayUser') ? bintrayUser : 'jenkins'
+    bintrayApiKey = project.hasProperty('bintrayApiKey') ? bintrayApiKey : System.getenv("NEXUS_PASS")
+}
+
 
 ext {
     vertxVersion = '3.2.1'
@@ -89,3 +118,55 @@ task bowerInstall(type: NodeTask) {
 }
 
 build.dependsOn bowerInstall
+
+bintray {
+    user = bintrayUser
+    key = bintrayApiKey
+    publications = ['jbakery', 'jbakerySources']
+
+    publish = true
+
+    pkg {
+        repo = 'maven'
+        name = 'jbakery'
+        userOrg = 'netdava'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/netdava/jbakery'
+        websiteUrl = 'https://github.com/netdava/jbakery'
+        desc = 'Static website generator with a twist'
+        issueTrackerUrl = 'https://github.com/netdava/jbakery/issues'
+        labels = ['jbake', 'static website', 'html', 'web', 'jekyll']
+        publicDownloadNumbers = true
+        githubRepo = 'netdava/jbakery'
+
+        version {
+            name = version
+            desc = 'Static website generator with a twist'
+            released = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ss.SSSZZ').format(new Date())
+            vcsTag = version.toString()
+        }
+    }
+}
+
+task sourceJar(type: Jar, dependsOn: classes) {
+    classifier 'sources'
+    from sourceSets.main.allJava
+}
+
+publishing {
+    publications {
+        jbakery(MavenPublication) {
+            groupId 'com.netdava'
+            artifactId 'jbakery'
+            from components.java
+        }
+        jbakerySources(MavenPublication) {
+            groupId 'com.netdava'
+            artifactId 'jbakery'
+            from components.java
+            artifact sourceJar {
+                classifier 'sources'
+            }
+        }
+    }
+}

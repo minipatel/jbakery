@@ -1,11 +1,8 @@
 plugins {
     id "com.moowork.node" version "0.11"
-    id "com.jfrog.bintray" version "1.6"
     id 'application'
     id 'maven-publish'
 }
-
-import java.text.SimpleDateFormat
 
 dependencies {
     compile project(':jbakery-core')
@@ -39,46 +36,6 @@ distributions {
             from("src/conf") {
                 into 'conf'
             }
-        }
-    }
-}
-
-bintray {
-    user = bintrayUser
-    key = bintrayApiKey
-    publications = ['jbakery']
-
-    publish = true
-
-    pkg {
-        repo = 'maven'
-        name = 'jbakery'
-        userOrg = 'netdava'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/netdava/jbakery.git'
-        websiteUrl = 'https://github.com/netdava/jbakery'
-        desc = 'Static website generator with a twist'
-        issueTrackerUrl = 'https://github.com/netdava/jbakery/issues'
-        labels = ['jbake', 'static website', 'html', 'web', 'jekyll']
-        publicDownloadNumbers = true
-        githubRepo = 'netdava/jbakery'
-
-        version {
-            name = version
-            desc = 'Static website generator with a twist'
-            released = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ss.SSSZZ').format(new Date())
-            vcsTag = version.toString()
-        }
-    }
-}
-
-publishing {
-    publications {
-        jbakery(MavenPublication) {
-            groupId 'com.netdava.jbakery'
-            artifactId 'jbakery-bin'
-
-            artifact distTar
         }
     }
 }
@@ -120,4 +77,15 @@ build.dependsOn bowerInstall
 task localInstall(type: Copy, dependsOn: 'distTar') {
     from(tarTree(distTar.outputs.files.singleFile))
     into "${rootProject.rootDir}"
+}
+
+publishing {
+    publications {
+        jbakery(MavenPublication) {
+            groupId 'com.netdava.jbakery'
+            artifactId 'jbakery-bin'
+
+            artifact distTar
+        }
+    }
 }

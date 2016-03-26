@@ -17,11 +17,14 @@ configurations {
 }
 
 ext {
-    vertxVersion = '3.1.0'
+    vertxVersion = '3.2.1'
+    springVersion = '4.2.5.RELEASE'
 }
 
 dependencies {
-    provided 'org.projectlombok:lombok:1.16.6'
+    compileOnly 'org.projectlombok:lombok:1.16.6'
+    testCompileOnly 'org.projectlombok:lombok:1.16.6'
+
     compile 'org.slf4j:slf4j-api:1.7.7'
     compile 'org.apache.logging.log4j:log4j-api:2.4.1'
     compile 'org.apache.logging.log4j:log4j-core:2.4.1'
@@ -29,7 +32,14 @@ dependencies {
 
     compile 'org.eclipse.jgit:org.eclipse.jgit:4.1.0.201509280440-r'
     compile 'org.eclipse.jgit:org.eclipse.jgit.archive:4.1.0.201509280440-r'
+
     compile 'org.jbake:jbake-core:2.4.0'
+
+    compile "org.springframework:spring-core:${springVersion}"
+    compile "org.springframework:spring-context:${springVersion}"
+    compile "org.springframework:spring-beans:${springVersion}"
+
+    compile 'com.github.rworsnop:vertx-beans:1.2.1'
 
     compile "io.vertx:vertx-core:${vertxVersion}"
     compile "io.vertx:vertx-web:${vertxVersion}"
@@ -39,7 +49,6 @@ dependencies {
 
     compile "io.vertx:vertx-web-templ-handlebars:${vertxVersion}"
     compile "io.vertx:vertx-auth-shiro:${vertxVersion}"
-    compile "io.vertx:vertx-dropwizard-metrics:${vertxVersion}"
 
     testCompile "io.vertx:vertx-unit:${vertxVersion}"
     testCompile "junit:junit:4.11"
@@ -68,12 +77,12 @@ task npmCacheConfig(type: NpmTask) {
     description = "Configure the NPM cache"
     def npmCacheDir = "${gradle.getGradleUserHomeDir()}/caches/npm"
     outputs.files file(npmCacheDir)
-    args = [ 'config', 'set', 'cache', npmCacheDir ]
+    args = ['config', 'set', 'cache', npmCacheDir]
 }
 
 task npmPackages(type: NpmTask, dependsOn: npmCacheConfig) {
     description = "Install Node.js packages"
-    args = [ 'install' ]
+    args = ['install']
     inputs.files file('package.json')
     outputs.files file('node_modules')
 }

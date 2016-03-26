@@ -1,0 +1,123 @@
+plugins {
+    id "com.moowork.node" version "0.11"
+    id "com.jfrog.bintray" version "1.6"
+    id 'application'
+    id 'maven-publish'
+}
+
+import java.text.SimpleDateFormat
+
+dependencies {
+    compile project(':jbakery-core')
+}
+
+mainClassName = "netdava.jbakery.web.Main"
+
+distTar {
+    compression Compression.GZIP
+}
+
+startScripts {
+    applicationName "jbakery"
+}
+
+distributions {
+    main {
+        baseName = 'jbakery'
+        contents {
+            from("${rootProject.rootDir}/templates") {
+                into 'templates'
+            }
+            from("${rootProject.rootDir}/assets") {
+                into 'webroot'
+            }
+
+            from("bower_components") {
+                into 'webroot/components'
+            }
+
+            from("src/conf") {
+                into 'conf'
+            }
+        }
+    }
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayApiKey
+    publications = ['jbakery', 'jbakerySources']
+
+    publish = true
+
+    pkg {
+        repo = 'maven'
+        name = 'jbakery'
+        userOrg = 'netdava'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/netdava/jbakery'
+        websiteUrl = 'https://github.com/netdava/jbakery'
+        desc = 'Static website generator with a twist'
+        issueTrackerUrl = 'https://github.com/netdava/jbakery/issues'
+        labels = ['jbake', 'static website', 'html', 'web', 'jekyll']
+        publicDownloadNumbers = true
+        githubRepo = 'netdava/jbakery'
+
+        version {
+            name = version
+            desc = 'Static website generator with a twist'
+            released = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ss.SSSZZ').format(new Date())
+            vcsTag = version.toString()
+        }
+    }
+}
+
+publishing {
+    publications {
+        jbakery(MavenPublication) {
+            groupId 'com.netdava.jbakery'
+            artifactId 'jbakery-bin'
+
+            artifact distTar
+        }
+    }
+}
+
+// https://objectpartners.com/2015/04/29/using-gradle-and-bower-to-manage-jscss-dependencies/
+node {
+    version = '5.9.1'
+    npmVersion = '3.7.3'
+    download = true
+}
+
+task npmCacheConfig(type: NpmTask) {
+    description = "Configure the NPM cache"
+    def npmCacheDir = "${gradle.getGradleUserHomeDir()}/caches/npm"
+    outputs.files file(npmCacheDir)
+    args = ['config', 'set', 'cache', npmCacheDir]
+}
+
+task npmPackages(type: NpmTask, dependsOn: npmCacheConfig) {
+    description = "Install Node.js packages"
+    args = ['install']
+    inputs.files file('package.json')
+    outputs.files file('node_modules')
+}
+
+task bowerInstall(type: NodeTask) {
+    script = file('node_modules/bower/bin/bower')
+    args = ["--config.storage.cache=${gradle.getGradleUserHomeDir()}/caches/bower/cache",
+            "--config.storage.packages=${gradle.getGradleUserHomeDir()}/caches/bower/packages",
+            "--config.storage.registry=${gradle.getGradleUserHomeDir()}/caches/bower/registry",
+            'install']
+    inputs.files file('bower.json')
+    outputs.files file('webroot/components')
+    dependsOn npmPackages
+}
+
+build.dependsOn bowerInstall
+
+task localInstall(type: Copy, dependsOn: 'distTar') {
+    from(tarTree(distTar.outputs.files.singleFile))
+    into "${rootProject.rootDir}"
+}

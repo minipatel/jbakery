@@ -12,6 +12,8 @@ node_modules
 .idea/
 # if you remove the above rule, at least ignore the following:
 
+jbakery-*-SNAPSHOT/
+
 # User-specific stuff:
 # .idea/workspace.xml
 # .idea/tasks.xml

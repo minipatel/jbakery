@@ -13,7 +13,10 @@ import java.text.SimpleDateFormat
 
 mainClassName = "netdava.jbakery.web.Main"
 
+distZip.dependsOn 'bowerInstall'
+
 distTar {
+    dependsOn 'bowerInstall'
     compression Compression.GZIP
 }
 
@@ -75,8 +78,6 @@ task bowerInstall(type: NodeTask) {
     dependsOn npmPackages
 }
 
-build.dependsOn bowerInstall
-
 task localInstall(type: Copy, dependsOn: 'distTar') {
     from(tarTree(distTar.outputs.files.singleFile))
     into "${rootProject.rootDir}"
@@ -88,17 +89,13 @@ publishing {
             groupId 'com.netdava.jbakery'
             artifactId 'jbakery-bin'
 
-            artifact distTar {
-                classifier 'tgz'
-            }
+            artifact distTar
         }
         zip(MavenPublication) {
             groupId 'com.netdava.jbakery'
             artifactId 'jbakery-bin'
 
-            artifact distZip {
-                classifier 'zip'
-            }
+            artifact distZip
         }
     }
 }

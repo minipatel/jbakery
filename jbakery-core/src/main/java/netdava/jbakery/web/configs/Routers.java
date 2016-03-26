@@ -9,10 +9,16 @@ import io.vertx.ext.web.handler.ResponseTimeHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.TemplateHandler;
 import io.vertx.ext.web.templ.ThymeleafTemplateEngine;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+@Slf4j
 @Configuration
 public class Routers {
 
@@ -25,17 +31,26 @@ public class Routers {
     @Autowired
     ThymeleafTemplateEngine thymeleafTemplateEngine;
 
+    @Value("${JBAKERY_HOME}")
+    String jbakeryHomeProp;
+
     @Bean
     public Router mainRouter() {
         Router router = Router.router(vertx);
 
+        Path jbakeryHome = Paths.get(jbakeryHomeProp);
+
         router.route().handler(BodyHandler.create().setBodyLimit(50 * MB));
-        router.route().handler(FaviconHandler.create("webroot/favicon.ico"));
+        router.route().handler(FaviconHandler.create(jbakeryHome.resolve("webroot/favicon.ico").toString()));
         router.route().handler(LoggerHandler.create());
         router.route().handler(ResponseTimeHandler.create());
 
         router.route("/static/*")
-                .handler(StaticHandler.create().setIndexPage("index.html").setCachingEnabled(false));
+                .handler(StaticHandler.create()
+                        .setAllowRootFileSystemAccess(true)
+                        .setWebRoot(jbakeryHome.resolve("webroot").toString())
+                        .setIndexPage("index.html")
+                        .setCachingEnabled(false));
 
         router.route().handler(TemplateHandler.create(thymeleafTemplateEngine, "", "text/html"));
 

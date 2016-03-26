@@ -9,11 +9,20 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
-import org.springframework.core.env.Environment;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.MutablePropertySources;
+import org.springframework.core.env.PropertiesPropertySource;
 import org.thymeleaf.resourceresolver.FileResourceResolver;
 import org.thymeleaf.templatemode.StandardTemplateModeHandlers;
 import org.thymeleaf.templateresolver.TemplateResolver;
+
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Properties;
 
 @ComponentScan
 @Configuration
@@ -24,11 +33,25 @@ public class Config {
     Vertx vertx;
 
     @Autowired
-    Environment env;
+    ConfigurableEnvironment env;
 
     @Bean
     public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
         return new PropertySourcesPlaceholderConfigurer();
+    }
+
+    @Bean
+    @Lazy(false)
+    public Properties jbakeryConfig() throws IOException {
+        Properties jbakery = new Properties();
+
+        Path jbakeryConfig = Paths.get(env.getProperty(Main.JBAKERY_HOME), "conf/jbakery.properties");
+        jbakery.load(Files.newBufferedReader(jbakeryConfig));
+
+        MutablePropertySources sources = env.getPropertySources();
+        sources.addFirst(new PropertiesPropertySource("jbakery", jbakery));
+
+        return jbakery;
     }
 
     @Bean

@@ -1,7 +1,6 @@
 plugins {
     id 'org.ajoberstar.grgit' version '1.4.2'
     id 'org.ajoberstar.release-opinion' version '1.4.2'
-    id "com.jfrog.bintray" version "1.6"
 }
 
 group 'com.netdava.jbakery'
@@ -11,14 +10,12 @@ description = 'Jbakery :: aggregator project'
 
 import org.ajoberstar.gradle.git.release.opinion.Strategies
 
-import java.text.SimpleDateFormat
-
 release {
     grgit = org.ajoberstar.grgit.Grgit.open()
     defaultVersionStrategy = Strategies.SNAPSHOT
 }
 
-tasks.release.dependsOn ':bintrayUpload'
+tasks.release.dependsOn ':distribution:bintrayUpload'
 
 ext {
     def grgit = org.ajoberstar.grgit.Grgit.open()
@@ -41,34 +38,5 @@ allprojects {
         mavenCentral()
         jcenter()
         maven { url "http://dl.bintray.com/netdava/maven" }
-    }
-}
-
-bintray {
-    user = bintrayUser
-    key = bintrayApiKey
-    publications = [':distribution:jbakery']
-
-    publish = true
-
-    pkg {
-        repo = 'maven'
-        name = 'jbakery'
-        userOrg = 'netdava'
-        licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/netdava/jbakery.git'
-        websiteUrl = 'https://github.com/netdava/jbakery'
-        desc = 'Static website generator with a twist'
-        issueTrackerUrl = 'https://github.com/netdava/jbakery/issues'
-        labels = ['jbake', 'static website', 'html', 'web', 'jekyll']
-        publicDownloadNumbers = true
-        githubRepo = 'netdava/jbakery'
-
-        version {
-            name = version
-            desc = 'Static website generator with a twist'
-            released = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ss.SSSZZ').format(new Date())
-            vcsTag = version.toString()
-        }
     }
 }

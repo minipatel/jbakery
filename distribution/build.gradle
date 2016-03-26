@@ -1,4 +1,5 @@
 plugins {
+    id "com.jfrog.bintray" version "1.6"
     id "com.moowork.node" version "0.11"
     id 'application'
     id 'maven-publish'
@@ -7,6 +8,8 @@ plugins {
 dependencies {
     compile project(':jbakery-core')
 }
+
+import java.text.SimpleDateFormat
 
 mainClassName = "netdava.jbakery.web.Main"
 
@@ -86,6 +89,35 @@ publishing {
             artifactId 'jbakery-bin'
 
             artifact distTar
+        }
+    }
+}
+
+bintray {
+    user = bintrayUser
+    key = bintrayApiKey
+    publications = ['jbakery']
+
+    publish = true
+
+    pkg {
+        repo = 'maven'
+        name = 'jbakery'
+        userOrg = 'netdava'
+        licenses = ['Apache-2.0']
+        vcsUrl = 'https://github.com/netdava/jbakery.git'
+        websiteUrl = 'https://github.com/netdava/jbakery'
+        desc = 'Static website generator with a twist'
+        issueTrackerUrl = 'https://github.com/netdava/jbakery/issues'
+        labels = ['jbake', 'static website', 'html', 'web', 'jekyll']
+        publicDownloadNumbers = true
+        githubRepo = 'netdava/jbakery'
+
+        version {
+            name = version
+            desc = 'Static website generator with a twist'
+            released = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ss.SSSZZ').format(new Date())
+            vcsTag = version.toString()
         }
     }
 }

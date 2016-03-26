@@ -46,7 +46,7 @@ distributions {
 bintray {
     user = bintrayUser
     key = bintrayApiKey
-    publications = ['jbakery', 'jbakerySources']
+    publications = ['jbakery']
 
     publish = true
 
@@ -55,7 +55,7 @@ bintray {
         name = 'jbakery'
         userOrg = 'netdava'
         licenses = ['Apache-2.0']
-        vcsUrl = 'https://github.com/netdava/jbakery'
+        vcsUrl = 'https://github.com/netdava/jbakery.git'
         websiteUrl = 'https://github.com/netdava/jbakery'
         desc = 'Static website generator with a twist'
         issueTrackerUrl = 'https://github.com/netdava/jbakery/issues'

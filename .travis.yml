@@ -1,0 +1,11 @@
+language: java
+
+addons:
+  hostname: short-hostname
+
+jdk:
+  - openjdk8
+  - oraclejdk8
+
+notifications:
+  irc: "irc.freenode.org#jbake"

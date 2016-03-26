@@ -1,19 +1,13 @@
 plugins {
     id "com.moowork.node" version "0.11"
+    id 'java'
+    id 'idea'
+    id 'application'
 }
-
-// Apply the java plugin to add support for Java
-apply plugin: 'java'
-apply plugin: 'application'
 
 repositories {
     mavenCentral()
     jcenter()
-}
-
-configurations {
-    provided
-    compile.extendsFrom provided
 }
 
 ext {
@@ -27,11 +21,9 @@ dependencies {
 
     compile 'org.slf4j:slf4j-api:1.7.7'
     compile 'org.apache.logging.log4j:log4j-api:2.4.1'
+
     compile 'org.apache.logging.log4j:log4j-core:2.4.1'
     compile 'org.apache.logging.log4j:log4j-slf4j-impl:2.4.1'
-
-    compile 'org.eclipse.jgit:org.eclipse.jgit:4.1.0.201509280440-r'
-    compile 'org.eclipse.jgit:org.eclipse.jgit.archive:4.1.0.201509280440-r'
 
     compile 'org.jbake:jbake-core:2.4.0'
 
@@ -40,7 +32,6 @@ dependencies {
     compile "org.springframework:spring-beans:${springVersion}"
 
     compile 'com.github.rworsnop:vertx-beans:1.2.1'
-
     compile "io.vertx:vertx-core:${vertxVersion}"
     compile "io.vertx:vertx-web:${vertxVersion}"
 
@@ -48,22 +39,21 @@ dependencies {
     compile "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:1.3.1"
 
     compile "io.vertx:vertx-web-templ-handlebars:${vertxVersion}"
-    compile "io.vertx:vertx-auth-shiro:${vertxVersion}"
 
     testCompile "io.vertx:vertx-unit:${vertxVersion}"
     testCompile "junit:junit:4.11"
 }
 
-sourceSets {
-    main {
-        compileClasspath += configurations.provided
+idea {
+    module {
+        scopes.COMPILE.plus += [configurations.compileOnly]
     }
 }
 
 sourceCompatibility = '1.8'
 targetCompatibility = '1.8'
 
-mainClassName = "netdava.jbakery.JBakery"
+mainClassName = "netdava.jbakery.web.Main"
 
 // gradle + node + bower integration
 // https://objectpartners.com/2015/04/29/using-gradle-and-bower-to-manage-jscss-dependencies/

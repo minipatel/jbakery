@@ -35,21 +35,28 @@ public class VertxHttp {
     @Autowired
 
     ContextRunner contextRunner;
-    @Value("${server.port:8080}")
 
+    @Value("${server.port:8080}")
     Integer port;
+
     @Value("${server.address:localhost}")
     String address;
 
     @PostConstruct
     public void start() throws InterruptedException, ExecutionException, TimeoutException {
         // Create two instances
-        contextRunner.executeBlocking(2,
-                (Handler<AsyncResult<HttpServer>> handler) ->
-                        vertx.createHttpServer()
-                                .requestHandler(router::accept)
-                                .listen(port, address, handler),
-                1, TimeUnit.MINUTES);
+
+        if (env.containsProperty("serve")) {
+            log.info("Server started http://{}:{}/", address, port);
+            contextRunner.executeBlocking(2,
+                    (Handler<AsyncResult<HttpServer>> handler) ->
+                            vertx.createHttpServer()
+                                    .requestHandler(router::accept)
+                                    .listen(port, address, handler),
+                    1, TimeUnit.MINUTES);
+        } else {
+            log.info("Not starting web server. User --serve coommand line parameter.");
+        }
     }
 
 }

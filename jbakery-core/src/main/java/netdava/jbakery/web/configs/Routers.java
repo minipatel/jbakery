@@ -3,13 +3,14 @@ package netdava.jbakery.web.configs;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import io.vertx.ext.web.handler.BodyHandler;
-import io.vertx.ext.web.handler.FaviconHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.ResponseTimeHandler;
 import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.TemplateHandler;
 import io.vertx.ext.web.templ.ThymeleafTemplateEngine;
 import lombok.extern.slf4j.Slf4j;
+import netdava.jbakery.web.Oven;
+import org.jbake.app.JBakeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -17,14 +18,16 @@ import org.springframework.context.annotation.Configuration;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.text.MessageFormat;
+import java.util.List;
 
 @Slf4j
 @Configuration
 public class Routers {
 
+    public static final String PREFIX = "/_jbakery";
     private static final int KB = 1024;
     private static final int MB = 1024 * KB;
-
     @Autowired
     Vertx vertx;
 
@@ -34,6 +37,9 @@ public class Routers {
     @Value("${JBAKERY_HOME}")
     String jbakeryHomeProp;
 
+    @Autowired
+    Oven oven;
+
     @Bean
     public Router mainRouter() {
         Router router = Router.router(vertx);
@@ -41,9 +47,42 @@ public class Routers {
         Path jbakeryHome = Paths.get(jbakeryHomeProp);
 
         router.route().handler(BodyHandler.create().setBodyLimit(50 * MB));
-        router.route().handler(FaviconHandler.create(jbakeryHome.resolve("webroot/favicon.ico").toString()));
         router.route().handler(LoggerHandler.create());
         router.route().handler(ResponseTimeHandler.create());
+
+        router.mountSubRouter(PREFIX, jbakery(Vertx.vertx()));
+
+        router.route().handler(StaticHandler.create("output")
+                .setIndexPage("index.html")
+                .setCachingEnabled(false));
+
+        return router;
+    }
+
+
+    public Router jbakery(Vertx vertx) {
+        Router router = Router.router(vertx);
+
+        Path jbakeryHome = Paths.get(jbakeryHomeProp);
+
+        router.route().blockingHandler(ctx -> {
+            oven.bake();
+
+            final List<String> errors = oven.getErrors();
+            if (!errors.isEmpty()) {
+                final StringBuilder msg = new StringBuilder();
+                // TODO: decide, if we want the all errors here
+                msg.append(MessageFormat.format("JBake failed with {0} errors:\n", errors.size()));
+                int errNr = 1;
+                for (final String error : errors) {
+                    msg.append(MessageFormat.format("{0}. {1}\n", errNr, error));
+                    ++errNr;
+                }
+                throw new JBakeException(msg.toString());
+            }
+
+            ctx.response().end(errors.toString());
+        });
 
         router.route("/static/*")
                 .handler(StaticHandler.create()
@@ -56,5 +95,6 @@ public class Routers {
 
         return router;
     }
+
 
 }

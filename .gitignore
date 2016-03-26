@@ -14,6 +14,10 @@ node_modules
 
 jbakery-*-SNAPSHOT/
 jbakery-*.*.*
+conf
+
+ieugen.ro
+output
 
 # User-specific stuff:
 # .idea/workspace.xml

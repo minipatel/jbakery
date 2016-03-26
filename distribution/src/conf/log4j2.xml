@@ -13,16 +13,13 @@
         </Console>
     </appenders>
     <Loggers>
-        <Logger name="org.apache.shiro" level="info" additivity="false">
+        <Logger name="org.springframework" level="error" additivity="false">
             <AppenderRef ref="Console"/>
-            <AppenderRef ref="RollingFile"/>
         </Logger>
         <Logger name="io.vertx" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
         </Logger>
         <Logger name="io.netty" level="debug" additivity="false">
-            <AppenderRef ref="Console"/>
             <AppenderRef ref="RollingFile"/>
         </Logger>
         <Root level="info">

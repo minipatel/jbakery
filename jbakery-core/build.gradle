@@ -39,6 +39,6 @@ dependencies {
 
 idea {
     module {
-        scopes.PROVIDED.plus += [configurations.compileOnly]
+        scopes.COMPILE.plus += [configurations.compileOnly]
     }
 }

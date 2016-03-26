@@ -88,7 +88,12 @@ publishing {
             groupId 'com.netdava.jbakery'
             artifactId 'jbakery-bin'
 
-            artifact distTar
+            artifact distTar {
+                classifier 'tgz'
+            }
+            artifact distZip {
+                classifier 'zip'
+            }
         }
     }
 }
@@ -109,12 +114,12 @@ bintray {
         websiteUrl = 'https://github.com/netdava/jbakery'
         desc = 'Static website generator with a twist'
         issueTrackerUrl = 'https://github.com/netdava/jbakery/issues'
-        labels = ['jbake', 'static website', 'html', 'web', 'jekyll']
+        labels = ['jbake', 'static', 'website', 'generator', 'jekyll']
         publicDownloadNumbers = true
         githubRepo = 'netdava/jbakery'
 
         version {
-            name = version
+            name = version.toString()
             desc = 'Static website generator with a twist'
             released = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ss.SSSZZ').format(new Date())
             vcsTag = version.toString()

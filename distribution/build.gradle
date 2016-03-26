@@ -84,13 +84,18 @@ task localInstall(type: Copy, dependsOn: 'distTar') {
 
 publishing {
     publications {
-        jbakery(MavenPublication) {
+        tgz(MavenPublication) {
             groupId 'com.netdava.jbakery'
             artifactId 'jbakery-bin'
 
             artifact distTar {
                 classifier 'tgz'
             }
+        }
+        zip(MavenPublication) {
+            groupId 'com.netdava.jbakery'
+            artifactId 'jbakery-bin'
+
             artifact distZip {
                 classifier 'zip'
             }
@@ -98,10 +103,13 @@ publishing {
     }
 }
 
+
 bintray {
+    def projectVersion = version
+
     user = bintrayUser
     key = bintrayApiKey
-    publications = ['jbakery']
+    publications = ['tgz','zip']
 
     publish = true
 
@@ -119,10 +127,11 @@ bintray {
         githubRepo = 'netdava/jbakery'
 
         version {
-            name = version.toString()
+            print 'Publishing version' + projectVersion.toString()
+            name = projectVersion.toString()
             desc = 'Static website generator with a twist'
             released = new SimpleDateFormat('yyyy-MM-dd\'T\'HH:mm:ss.SSSZZ').format(new Date())
-            vcsTag = version.toString()
+            vcsTag = projectVersion.toString()
         }
     }
 }

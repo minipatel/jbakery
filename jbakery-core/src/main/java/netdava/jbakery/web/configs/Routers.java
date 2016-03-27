@@ -9,8 +9,6 @@ import io.vertx.ext.web.handler.StaticHandler;
 import io.vertx.ext.web.handler.TemplateHandler;
 import io.vertx.ext.web.templ.ThymeleafTemplateEngine;
 import lombok.extern.slf4j.Slf4j;
-import netdava.jbakery.web.Oven;
-import org.jbake.app.JBakeException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -18,8 +16,6 @@ import org.springframework.context.annotation.Configuration;
 
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.MessageFormat;
-import java.util.List;
 
 @Slf4j
 @Configuration
@@ -36,9 +32,6 @@ public class Routers {
 
     @Value("${JBAKERY_HOME}")
     String jbakeryHomeProp;
-
-    @Autowired
-    Oven oven;
 
     @Bean
     public Router mainRouter() {
@@ -64,25 +57,6 @@ public class Routers {
         Router router = Router.router(vertx);
 
         Path jbakeryHome = Paths.get(jbakeryHomeProp);
-
-        router.route().blockingHandler(ctx -> {
-            oven.bake();
-
-            final List<String> errors = oven.getErrors();
-            if (!errors.isEmpty()) {
-                final StringBuilder msg = new StringBuilder();
-                // TODO: decide, if we want the all errors here
-                msg.append(MessageFormat.format("JBake failed with {0} errors:\n", errors.size()));
-                int errNr = 1;
-                for (final String error : errors) {
-                    msg.append(MessageFormat.format("{0}. {1}\n", errNr, error));
-                    ++errNr;
-                }
-                throw new JBakeException(msg.toString());
-            }
-
-            ctx.response().end(errors.toString());
-        });
 
         router.route("/static/*")
                 .handler(StaticHandler.create()

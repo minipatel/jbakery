@@ -27,6 +27,10 @@ To run the application use:
 Then visit http://localhost:8080/[localhost:8080]
 To triger a build visit http://localhost:8080/_jbakery
 
+NOTE: jbakery will watch the source directory and rebuild the website automatically.
+
+You could find more detaile inlink:LOCAL-INSTALL.adoc `LOCAL-INSTALL.adoc`.
+
 == Releases
 
 The releases are published on https://bintray.com/netdava/maven/jbakery .

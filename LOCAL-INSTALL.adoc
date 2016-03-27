@@ -1,0 +1,35 @@
+= Local install for development
+
+
+== Testing install
+
+One way to test Jbakery locally is to install it and use it to test the features.
+
+This setup ensures we can update versions easily. It requires `symbolic link` support. 
+
+Add the `JBAKERY_HOME` environemnt variable to your `~/.bashrc` or `.zshrc`.
+
+[source, shell]
+----
+  export JBAKERY_HOME=~/local/programe/jbakery
+  export PATH=$PATH:$JBAKERY_HOME/bin
+----
+
+NOTE: You will need to start another terminal whenever you change versions so the `$PATH` is updated and `jbakery` will be found.
+
+Then use gradel to build and install the project locally
+
+----
+  ./gradlew localInstall
+----
+
+And make sure you link the development build directory to your local testing directory.
+
+[source, shell]
+----
+  rm ~/local/programe/jbakery
+  ln -s /home/ieugen/contracte/netdava.com/jbakery/jbakery-0.0.5-SNAPSHOT ~/local/programe/jbakery
+  echo "Restart your terminal (or source the shell config) and enjoy"
+  jbakery
+----
+

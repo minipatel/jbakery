@@ -11,8 +11,6 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
-import java.text.MessageFormat;
-import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,14 +26,13 @@ public class BakeryWatchService {
     @Autowired
     Oven oven;
 
-
     @PostConstruct
-    public void registerFileWatcherForBakingORders() throws IOException, InterruptedException {
+    public void registerFileWatcherForBakingOrders() throws IOException, InterruptedException {
         ExecutorService executorService = Executors.newSingleThreadExecutor();
 
         final Path path = FileSystems.getDefault().getPath(source).toAbsolutePath();
         log.info("Watching path {} for baking orders.", path);
-        WatchDir watchDir = new WatchDir(path, true);
+        WatchDir watchDir = new WatchDir(oven, path, true);
 
         executorService.submit(new WatchWorker(oven, watchDir));
 
@@ -47,33 +44,17 @@ public class BakeryWatchService {
 
     @Data
     @Slf4j
-    public static class WatchWorker implements Callable<String> {
+    public static class WatchWorker implements Callable<Object> {
         final Oven oven;
         final WatchDir watchDir;
 
         @Override
-        public String call() throws Exception {
+        public Object call() throws Exception {
             log.info("Started file watcher");
             watchDir.processEvents();
-            return "nothing";
+            return null;
         }
 
-        private List<String> bakeMeUp(Oven oven) {
-            oven.bake();
-            return oven.getErrors();
-        }
-
-        private String formatErrorMessages(List<String> errors) {
-            final StringBuilder msg = new StringBuilder();
-            // TODO: decide, if we want the all errors here
-            msg.append(MessageFormat.format("JBake failed with {0} errors:\n", errors.size()));
-            int errNr = 1;
-            for (final String error : errors) {
-                msg.append(MessageFormat.format("{0}. {1}\n", errNr, error));
-                ++errNr;
-            }
-            return msg.toString();
-        }
     }
 
 }

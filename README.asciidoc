@@ -29,7 +29,7 @@ To triger a build visit http://localhost:8080/_jbakery
 
 NOTE: jbakery will watch the source directory and rebuild the website automatically.
 
-You could find more detaile inlink:LOCAL-INSTALL.adoc `LOCAL-INSTALL.adoc`.
+You could find more detaile in link:LOCAL-INSTALL.adoc `LOCAL-INSTALL.adoc`.
 
 == Releases
 

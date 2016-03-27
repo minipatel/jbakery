@@ -17,10 +17,20 @@ To run the application use:
 
 [source, shell]
 ----
-    ./gradlew run
+    ./gradlew localInstall
+    echo "This will build the distribution and unpack it to jbakery-<version>"
+    cd jbakery-<version>
+    export JBAKERY_HOME=/path/to/<jbakery-version>
+    ./bin/jbakery --serve --source=/path/to/jbake-site
 ----
 
 Then visit http://localhost:8080/[localhost:8080]
+To triger a build visit http://localhost:8080/_jbakery
+
+== Releases
+
+The releases are published on https://bintray.com/netdava/maven/jbakery .
+
 
 == Contributing
 

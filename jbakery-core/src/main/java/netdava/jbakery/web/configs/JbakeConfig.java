@@ -34,7 +34,9 @@ public class JbakeConfig {
             throw new JBakeException("Configuration error: " + e.getMessage(), e);
         }
 
-        System.out.println("JBake " + config.getString(ConfigUtil.Keys.VERSION) + " (" + config.getString(ConfigUtil.Keys.BUILD_TIMESTAMP) + ") [http://jbake.org]");
+        System.out.println("JBake " + config.getString(ConfigUtil.Keys.VERSION) +
+                " (" + config.getString(ConfigUtil.Keys.BUILD_TIMESTAMP) + ") [http://jbake.org]");
+
         System.out.println();
 
         Oven oven = new Oven(sourceFile, new File(destination), true);

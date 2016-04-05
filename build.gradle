@@ -1,6 +1,7 @@
 plugins {
     id 'org.ajoberstar.grgit' version '1.4.2'
     id 'org.ajoberstar.release-opinion' version '1.4.2'
+    id 'net.gvmtool.sdkvendor' version '0.4.1'
 }
 
 group 'com.netdava.jbakery'
@@ -16,6 +17,17 @@ release {
 }
 
 tasks.release.dependsOn ':distribution:bintrayUpload'
+
+gvm {
+    def releasedVersion = project.version.toString()
+    api = "https://vendors.sdkman.io/"
+    consumerKey = project.property("jbakery.consumerKey")
+    consumerToken = project.property("jbakery.consumerToken")
+    candidate = "jbakery"
+    version = releasedVersion
+    url = "https://bintray.com/artifact/download/netdava/maven/com/netdava/jbakery/jbakery-bin/${releasedVersion}/jbakery-bin-${releasedVersion}.tgz"
+    hashtag = "#jbakery"
+}
 
 ext {
     def grgit = org.ajoberstar.grgit.Grgit.open()

@@ -32,6 +32,7 @@ public abstract class AbstractWatchDir {
     private final WatchService watcher;
     private final Map<WatchKey, Path> keys;
     private final boolean recursive;
+
     private boolean trace = false;
 
     /**
@@ -127,6 +128,7 @@ public abstract class AbstractWatchDir {
                         resetAndRemoveKeyIfDirNotAccessible(key);
                         return ev;
                     })
+                    .filter(this::filterPath)
                     .collect(Collectors.toList());
 
             batchProcess(filteredEvents);
@@ -160,4 +162,15 @@ public abstract class AbstractWatchDir {
 
 
     public abstract void batchProcess(List<WatchEvent<Path>> event);
+
+    /**
+     * Implement this method to determine which paths to filter and ignore.
+     *
+     * @param event
+     * @return
+     */
+    public boolean filterPath(WatchEvent<Path> event) {
+        return false;
+    }
+
 }

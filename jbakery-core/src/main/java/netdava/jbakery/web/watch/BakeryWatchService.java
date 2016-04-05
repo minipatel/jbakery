@@ -5,12 +5,16 @@ import lombok.extern.slf4j.Slf4j;
 import netdava.jbakery.web.Oven;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -23,8 +27,14 @@ public class BakeryWatchService {
     @Value("${source:.}")
     String source;
 
+    @Value("${destination:output}")
+    String destination;
+
     @Autowired
     Oven oven;
+
+    @Autowired
+    Environment env;
 
     @PostConstruct
     public void registerFileWatcherForBakingOrders() throws IOException, InterruptedException {
@@ -32,7 +42,9 @@ public class BakeryWatchService {
 
         final Path path = FileSystems.getDefault().getPath(source).toAbsolutePath();
         log.info("Watching path {} for baking orders.", path);
-        WatchDir watchDir = new WatchDir(oven, path, true);
+
+        List<String> pathsToIgnore = pathsToIgnore();
+        WatchDir watchDir = new WatchDir(oven, path, true, pathsToIgnore);
 
         executorService.submit(new WatchWorker(oven, watchDir));
 
@@ -40,6 +52,17 @@ public class BakeryWatchService {
             log.info("Shutting down baking thread.");
             executorService.shutdown();
         }));
+    }
+
+    private List<String> pathsToIgnore() {
+        List<String> pathsToIgnore = new ArrayList<>();
+        if (env.containsProperty("ignore")) {
+            String ignored = env.getProperty("ignore");
+            pathsToIgnore.addAll(Arrays.asList(ignored.split(":")));
+        } else {
+            pathsToIgnore.add(String.format("%s/**", destination));
+        }
+        return pathsToIgnore;
     }
 
     @Data

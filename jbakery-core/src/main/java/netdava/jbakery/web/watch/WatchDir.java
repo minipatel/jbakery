@@ -22,7 +22,7 @@ public class WatchDir extends AbstractWatchDir {
 
     public WatchDir(@NonNull Oven oven,
                     @NonNull Path dir,
-                    @NonNull boolean recursive,
+                    boolean recursive,
                     @NonNull List<String> pathsToIgnore) throws IOException {
         super(dir, recursive);
         this.oven = oven;

@@ -33,6 +33,11 @@ dependencies {
 
     compile "io.vertx:vertx-web-templ-handlebars:${vertxVersion}"
 
+
+    compile "org.asciidoctor:asciidoctorj:1.5.2"
+    compile "org.freemarker:freemarker:2.3.20"
+    compile "org.pegdown:pegdown:1.4.2"
+
     testCompile "io.vertx:vertx-unit:${vertxVersion}"
     testCompile "junit:junit:4.11"
 }

@@ -28,7 +28,7 @@ public class Oven {
     private final static Logger LOGGER = LoggerFactory.getLogger(org.jbake.app.Oven.class);
 
     private final static Pattern TEMPLATE_DOC_PATTERN = Pattern.compile("(?:template\\.)([a-zA-Z0-9]+)(?:\\.file)");
-
+    Crawler crawler;
     private CompositeConfiguration config;
     private File source;
     private File destination;
@@ -39,6 +39,7 @@ public class Oven {
     private List<String> errors = new LinkedList<String>();
     private int renderedCount = 0;
     private ContentStore db;
+    private Renderer renderer;
 
     /**
      * Delegate c'tor to prevent API break for the moment.
@@ -60,6 +61,8 @@ public class Oven {
         this.isClearCache = isClearCache;
         SLF4JBridgeHandler.removeHandlersForRootLogger();
         SLF4JBridgeHandler.install();
+        this.crawler = new Crawler(db, source, config);
+        this.renderer = new Renderer(db, destination, templatesPath, config);
     }
 
     public CompositeConfiguration getConfig() {
@@ -138,7 +141,7 @@ public class Oven {
         clearCacheIfNeeded(db);
 
         // process source content
-        Crawler crawler = new Crawler(db, source, config);
+
         crawler.crawl(contentsPath);
         LOGGER.info("Content detected:");
         for (String docType : DocumentTypes.getDocumentTypes()) {
@@ -148,7 +151,6 @@ public class Oven {
             }
         }
 
-        Renderer renderer = new Renderer(db, destination, templatesPath, config);
 
         for (String docType : DocumentTypes.getDocumentTypes()) {
             for (ODocument document : db.getUnrenderedContent(docType)) {

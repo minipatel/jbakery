@@ -1,8 +1,11 @@
 package netdava.jbakery.web.watch;
 
+import lombok.NonNull;
 import lombok.extern.slf4j.Slf4j;
 import netdava.jbakery.web.Oven;
+import org.springframework.util.AntPathMatcher;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.WatchEvent;
@@ -13,10 +16,17 @@ import java.util.List;
 public class WatchDir extends AbstractWatchDir {
 
     Oven oven;
+    List<String> pathsToIgnore;
+    AntPathMatcher antPathMatcher = new AntPathMatcher(File.pathSeparator);
 
-    public WatchDir(Oven oven, Path dir, boolean recursive) throws IOException {
+
+    public WatchDir(@NonNull Oven oven,
+                    @NonNull Path dir,
+                    @NonNull boolean recursive,
+                    @NonNull List<String> pathsToIgnore) throws IOException {
         super(dir, recursive);
         this.oven = oven;
+        this.pathsToIgnore = pathsToIgnore;
     }
 
     @Override
@@ -43,4 +53,12 @@ public class WatchDir extends AbstractWatchDir {
         return msg.toString();
     }
 
+    @Override
+    public boolean filterPath(WatchEvent<Path> watchedPath) {
+        return pathsToIgnore.stream()
+                .anyMatch(event -> {
+                    boolean result = antPathMatcher.match(event, watchedPath.context().toAbsolutePath().toString());
+                    return result;
+                });
+    }
 }

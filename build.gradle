@@ -19,7 +19,7 @@ release {
 tasks.release.dependsOn ':distribution:bintrayUpload'
 
 gvm {
-    def releasedVersion = version.toString()
+    def releasedVersion = project.version.toString()
     api = "https://vendors.sdkman.io/"
     consumerKey = project.property("jbakery.consumerKey")
     consumerToken = project.property("jbakery.consumerToken")

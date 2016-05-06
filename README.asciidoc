@@ -2,6 +2,27 @@
 
 Website CMS with JBake .
 
+== Installing 
+
+Downloads are available via https://dl.bintray.com/netdava/maven/com/netdava/jbakery/jbakery-bin/[Bintray]
+
+Jbakery is also distributed via http://sdkman.io/[sdkman]. This is the fastest way to install it. 
+
+Install sdkman:
+
+[source, shell]
+----
+    curl -s http://get.sdkman.io | bash
+----
+
+Install jbakery:
+
+[source, shell]
+----
+    sdk install jbakery
+----
+
+
 == Building
 
 We are using http://gradle.org/[Gradle] to build our app. You will find the zip distribution in *build/distributions*
